@@ -38,6 +38,7 @@ CONF_ZONEDUMP_INTERVAL = "zonedump_interval"
 CONF_ZONENAME = "name"
 CONF_ZONES = "zones"
 CONF_ZONETYPE = "type"
+CONF_CREATE_ZONE_BYPASS_SWITCHES = "create_zone_bypass_switches"
 
 PANEL_TYPE_HONEYWELL = "HONEYWELL"
 PANEL_TYPE_DSC = "DSC"
@@ -49,6 +50,7 @@ DEFAULT_ZONEDUMP_INTERVAL = 30
 DEFAULT_ZONETYPE = "opening"
 DEFAULT_PANIC = "Police"
 DEFAULT_TIMEOUT = 10
+DEFAULT_CREATE_ZONE_BYPASS_SWITCHES = False
 
 SIGNAL_ZONE_UPDATE = "dscalarm.zones_updated"
 SIGNAL_PARTITION_UPDATE = "dscalarm.partition_updated"
@@ -89,6 +91,7 @@ CONFIG_SCHEMA = vol.Schema(
                     CONF_ZONEDUMP_INTERVAL, default=DEFAULT_ZONEDUMP_INTERVAL
                 ): vol.Coerce(int),
                 vol.Optional(CONF_TIMEOUT, default=DEFAULT_TIMEOUT): vol.Coerce(int),
+                vol.Optional(CONF_CREATE_ZONE_BYPASS_SWITCHES, default=DEFAULT_CREATE_ZONE_BYPASS_SWITCHES): cv.boolean,
             }
         )
     },
@@ -124,6 +127,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     zones = conf.get(CONF_ZONES)
     partitions = conf.get(CONF_PARTITIONS)
     connection_timeout = conf.get(CONF_TIMEOUT)
+    create_zone_bypass_switches = conf.get(CONF_CREATE_ZONE_BYPASS_SWITCHES)
     sync_connect: asyncio.Future[bool] = asyncio.Future()
 
     controller = EnvisalinkAlarmPanel(
@@ -137,7 +141,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         keep_alive,
         hass.loop,
         connection_timeout,
-        True,
+        create_zone_bypass_switches,
     )
     hass.data[DATA_EVL] = controller
 
@@ -241,8 +245,9 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
                 hass, Platform.BINARY_SENSOR, "dscalarm", {CONF_ZONES: zones}, config
             )
         )
-        # Only DSC panels support getting zone bypass status
-        if panel_type == PANEL_TYPE_DSC:
+
+        # Create zone bypass switches only if enabled and only for DSC panels
+        if create_zone_bypass_switches and panel_type == PANEL_TYPE_DSC:
             hass.async_create_task(
                 async_load_platform(
                     hass, "switch", "dscalarm", {CONF_ZONES: zones}, config
