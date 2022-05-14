@@ -17,6 +17,7 @@ For example:
 envisalink:
   host: "hostname"
   panel_type: "DSC"
+  ...
 ```
 
 would change to:
@@ -25,4 +26,11 @@ would change to:
 dscalarm:
   host:"hostname"
   panel_type: "DSC"
+  ...
+```
+
+Zone bypass switches are disabled by default.  To enable them, add the following to your config:
+
+```
+  create_zone_bypass_switches: true
 ```
