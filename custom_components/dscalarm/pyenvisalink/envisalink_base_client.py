@@ -3,7 +3,7 @@ import async_timeout
 import threading
 import logging
 import re
-from pyenvisalink import AlarmState
+from .alarm_state import AlarmState
 
 _LOGGER = logging.getLogger(__name__)
 

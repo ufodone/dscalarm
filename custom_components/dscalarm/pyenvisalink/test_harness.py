@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import signal
 import sys
-from pyenvisalink import EnvisalinkAlarmPanel
+from .alarm_panel import EnvisalinkAlarmPanel
 
 #This is a test harness for the pyenvisalink library.  It will assist in testing the library against both Honeywell and DSC.
 
