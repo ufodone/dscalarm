@@ -1,3 +1,10 @@
+# UPDATE NOTICE
+
+This is now deprecated in favor of [envisalink_new](https://github.com/ufodone/envisalink_new) which will eventually be merged back into Home Assistant.
+
+If you are using this integration, please consider switching to `envisalink_new`.  Thanks!
+
+
 # Temporary Home Assistant Envisalink Clone for DSC Alarm Systems
 A HACS integration which is a clone of the Envisalink integration with the zone bypass switches enabled.
 
